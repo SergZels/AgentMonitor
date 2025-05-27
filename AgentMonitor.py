@@ -16,6 +16,7 @@ from dataclasses import dataclass
 import sys
 import pytz
 
+#------------------------------------------------------------------------------
 # Налаштування логування
 logging.basicConfig(
     level=logging.INFO,
@@ -26,7 +27,6 @@ logging.basicConfig(
     ],
 )
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class MonitoringConfig:
