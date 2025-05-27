@@ -1,0 +1,37 @@
+{
+  "telegram": {
+    "api_id": 29592718,
+    "api_hash": "1ca02f298f8e6ed5184eadd7ea3f50c4",
+    "session_string": "1AZWarzgBu3XASuuE24DTaPHvOKl9brPyvG3yfE0az-i7VKoSA-2Zm_aTByx1bBAZEUrQeQ1wJqlwZrTxbqD1MSLeC6aytpNMscX9Lll0x0jXdha3D5T_kC5oCEZMIOehSOdEBSCmdqjVaT-418u_G_mC2vvK2F-QuTvlR2lE3_UvSw_8FJgYnAS6XkoOKzKF3OCfPmMR_eAWhM1Rh6LYJQvAFM9DtC3QkqHq9yfs_8ivP8Xq-9a_40zeAhnvQzGUbmIvXZQKCK5IVD4dIzlIhK_m5ieSWAoGKNAxeks408wUMNdWNDHMCI7XA1EMGPx9rfLGTtYJdc7wt68IJ8Ly8urA_xEmbHk="
+  },
+  "global_settings": {
+    "check_interval_seconds": 60,
+    "notification_user_id": -4760430303,
+    "timezone": "Europe/Kiev",
+    "night_hours": {
+      "start": "22:00",
+      "end": "08:00"
+    }
+  },
+  "groups": [
+    {
+      "chat_id": -1002519407365,
+      "name": "Main",
+      "description": "Main server",
+      "monitoring": {
+        "enabled": true,
+        "day_inactive_minutes": 60,
+        "night_inactive_minutes": 90
+      },
+      "api_reboot": {
+        "enabled": true,
+        "url": "https://chargeback-fund.com/control/restart",
+        "method": "GET",
+        "headers": {
+          "x-service-token": "123"
+        }
+      }
+    }
+
+  ]
+}

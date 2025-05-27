@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  telegram-monitor:
+    build: .
+    container_name: telegram_multi_monitor
+    restart: unless-stopped
+
+    # Змінні оточення
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=Europe/Kiev
+
+    # Монтування томів
+    volumes:
+      # Конфігурація (можна редагувати ззовні)
+      - ./config:/app/config
+      # Логи (зберігаються між перезапусками)
+      - ./logs:/app/logs
+      # Кеш сесії Telegram (зберігається між перезапусками)
+      - ./data:/app/data
+
+    # Мапінг портів (якщо потрібен веб-інтерфейс в майбутньому)
+    # ports:
+    #   - "8080:8080"
+
+    # Обмеження ресурсів
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+
+    # Перевірка здоров'я контейнера
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+    # Логування
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Додатковий сервіс для генерації сесії (запускається вручну)
+  session-generator:
+    build: .
+    container_name: telegram_session_generator
+    profiles: ["tools"]  # Не запускається автоматично
+
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=Europe/Kiev
+
+    volumes:
+      - ./config:/app/config
+      - ./data:/app/data
+
+    command: ["python", "generate_session.py"]
+
+    # Інтерактивний режим для введення коду
+    stdin_open: true
+    tty: true
+
+networks:
+  default:
+    name: telegram_monitor_network
+
+
+
+
+
