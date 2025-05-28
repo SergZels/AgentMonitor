@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # Можливість запуску вручну
 
 env:
-  DEPLOY_PATH: "/home/TMP2"  # Змініть на ваш шлях
+  DEPLOY_PATH: "/home/TMP2/Maestro"  # Змініть на ваш шлях
 
 jobs:
   deploy:
