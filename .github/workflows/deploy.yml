@@ -2,7 +2,7 @@ name: 🚀 Deploy to Server Main
 
 on:
   push:
-    branches: [ mainServer ]  # Змінити на вашу гілку
+    branches: [ main ]  # Змінити на вашу гілку
   workflow_dispatch:  # Можливість запуску вручну
 
 env:
