@@ -1,0 +1,103 @@
+name: 🚀 Deploy to Server Gulia
+
+on:
+  push:
+    branches: [ Gulia ]
+  workflow_dispatch:  # Можливість запуску вручну
+
+env:
+  DEPLOY_PATH: "/home/TMP2"  # Змініть на ваш шлях
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📂 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Повна історія для git pull
+
+    - name: 🔐 Setup SSH Key
+      run: |
+        # Створити SSH директорію
+        mkdir -p ~/.ssh
+        chmod 700 ~/.ssh
+        
+        # Зберегти приватний ключ
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+        chmod 600 ~/.ssh/deploy_key
+        
+        # Перевірити ключ
+        echo "=== SSH Key Validation ==="
+        ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null && echo "✅ Key is valid" || echo "❌ Key is invalid"
+        
+        # Додати сервер до known_hosts
+        ssh-keyscan -p ${{ secrets.SSH_PORT || '22' }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+        
+        echo "✅ SSH setup completed"
+
+    - name: 🧪 Test SSH Connection
+      run: |
+        echo "=== Testing SSH Connection ==="
+        ssh -i ~/.ssh/deploy_key \
+            -p ${{ secrets.SSH_PORT || '22' }} \
+            -o ConnectTimeout=10 \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            'echo "✅ SSH connection successful!" && whoami && pwd'
+
+    - name: 🚀 Deploy to Server
+      run: |
+        echo "=== Starting Deployment ==="
+        ssh -i ~/.ssh/deploy_key \
+            -p ${{ secrets.SSH_PORT || '22' }} \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+        
+        set -e  # Зупинити при помилці
+        
+        echo "📁 Navigating to project directory..."
+        cd ${{ env.DEPLOY_PATH }}
+        
+        echo "📥 Pulling latest changes..."
+        git pull origin main
+        
+        echo "🔍 Checking for deploy script..."
+        if [ -f "deploy.sh" ]; then
+            echo "🚀 Running deploy script..."
+            chmod +x deploy.sh
+            ./deploy.sh
+        else
+            echo "⚠️ deploy.sh not found, performing basic deployment..."
+            
+            # Базове розгортання (змініть під ваші потреби)
+            if [ -f "requirements.txt" ]; then
+                echo "📦 Installing Python dependencies..."
+                pip install -r requirements.txt
+            fi
+            
+            if [ -f "package.json" ]; then
+                echo "📦 Installing Node.js dependencies..."
+                npm install
+                npm run build || echo "No build script found"
+            fi
+        fi
+        
+        echo "✅ Deployment completed successfully!"
+        EOF
+
+    - name: 📊 Deployment Summary
+      if: always()
+      run: |
+        echo "=== Deployment Summary ==="
+        echo "🕐 Time: $(date)"
+        echo "👤 User: ${{ github.actor }}"
+        echo "📝 Commit: ${{ github.sha }}"
+        echo "🌿 Branch: ${{ github.ref_name }}"
+        
+        if [ $? -eq 0 ]; then
+            echo "✅ Status: SUCCESS"
+        else
+            echo "❌ Status: FAILED"
+        fi
