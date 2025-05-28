@@ -1,8 +1,8 @@
-name: 🚀 Deploy to Server
+name: 🚀 Deploy to Server Main
 
 on:
   push:
-    branches: [ main ]
+    branches: [ mainServer ]  # Змінити на вашу гілку
   workflow_dispatch:  # Можливість запуску вручну
 
 env:
