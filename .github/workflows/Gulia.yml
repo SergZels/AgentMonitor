@@ -1,12 +1,10 @@
 name: 🚀 Deploy to Server Gulia
 
 on:
-  push:
-    branches: [ Gulia ]
-  workflow_dispatch:  # Можливість запуску вручну
+  workflow_dispatch:  # Можливість запуску вручну лише через GitHub UI
 
 env:
-  DEPLOY_PATH: "/home/TMP2"  # Змініть на ваш шлях
+  DEPLOY_PATH: "/home/TMP2"
 
 jobs:
   deploy:
@@ -15,5 +13,5 @@ jobs:
     steps:
     - name: 🔐 Hello World
       run: |
-      
         echo "hello world"
+
