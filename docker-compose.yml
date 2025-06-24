@@ -3,13 +3,14 @@ version: '3.8'
 services:
   telegram-monitor:
     build: .
-    container_name: telegram_multi_monitor
+    container_name: telegram_monitor_control
     restart: unless-stopped
 
     # Змінні оточення
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=Europe/Kiev
+      - TELEGRAM_LOG_LEVEL=INFO
 
     # Монтування томів
     volumes:
@@ -17,26 +18,29 @@ services:
       - ./config:/app/config
       # Логи (зберігаються між перезапусками)
       - ./logs:/app/logs
-      # Кеш сесії Telegram (зберігається між перезапусками)
+      # Дані сесії Telegram
       - ./data:/app/data
+      # Backup конфігурацій
+      - ./backups:/app/backups
+   #   - .:/app
 
-    # Мапінг портів (якщо потрібен веб-інтерфейс в майбутньому)
-    # ports:
-    #   - "8080:8080"
+    # Мапінг портів
+    ports:
+      - "8000:8000"
 
     # Обмеження ресурсів
     deploy:
       resources:
         limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: 1G
+          cpus: '1.0'
         reservations:
-          memory: 128M
-          cpus: '0.1'
+          memory: 256M
+          cpus: '0.2'
 
-    # Перевірка здоров'я контейнера
+    # Перевірка здоров'я
     healthcheck:
-      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/api/monitor/status')"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -47,13 +51,17 @@ services:
       driver: "json-file"
       options:
         max-size: "10m"
-        max-file: "3"
+        max-file: "5"
 
-  # Додатковий сервіс для генерації сесії (запускається вручну)
+    # Мережі
+    networks:
+      - telegram_network
+
+  # Додатковий сервіс для генерації сесії (запускається окремо)
   session-generator:
     build: .
     container_name: telegram_session_generator
-    profiles: ["tools"]  # Не запускається автоматично
+    profiles: ["tools"]  # Не запускається з основним compose
 
     environment:
       - PYTHONUNBUFFERED=1
@@ -63,17 +71,16 @@ services:
       - ./config:/app/config
       - ./data:/app/data
 
-    command: ["python", "generate_session.py"]
-
     # Інтерактивний режим для введення коду
     stdin_open: true
     tty: true
 
+    command: ["python", "generate_session.py"]
+
+    networks:
+      - telegram_network
+
 networks:
-  default:
-    name: telegram_monitor_network
-
-
-
-
-
+  telegram_network:
+    driver: bridge
+    name: telegram_monitor_net

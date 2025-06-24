@@ -1,35 +1,41 @@
 FROM python:3.11-slim
 
-# Встановлюємо необхідні системні пакети
+# Встановлюємо системні залежності
 RUN apt-get update && apt-get install -y \
     gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Створюємо робочу директорію
+# Створюємо користувача для безпеки
+RUN useradd -m -u 1000 telegram_user
+
+# Встановлюємо робочу директорію
 WORKDIR /app
 
-# Копіюємо файл з залежностями
+# Копіюємо requirements та встановлюємо Python залежності
 COPY requirements.txt .
-
-# Встановлюємо Python залежності
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копіюємо код додатка
-COPY telegram_multi_monitor.py .
-COPY generate_session.py .
+# Копіюємо весь код
+COPY . .
 
-# Створюємо директорію для конфігурації та логів
-RUN mkdir -p /app/config /app/logs
-
-# Створюємо користувача для безпеки
-RUN useradd -m -u 1000 telegram_user && \
+# Створюємо необхідні директорії
+RUN mkdir -p /app/logs /app/data /app/config && \
     chown -R telegram_user:telegram_user /app
 
+# Переключаємося на нового користувача
 USER telegram_user
+
+# Відкриваємо порт для веб-інтерфейсу
+EXPOSE 8000
 
 # Змінні оточення
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app
 
-# Команда за замовчуванням
-CMD ["python", "AgentMonitor.py"]
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import requests; requests.get('http://localhost:8000/api/monitor/status')" || exit 1
+
+# Команда запуску
+CMD ["python", "mainAPI.py"]

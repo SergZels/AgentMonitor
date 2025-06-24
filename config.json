@@ -9,7 +9,7 @@
     "notification_user_id": -4760430303,
     "timezone": "Europe/Kiev",
     "night_hours": {
-      "start": "22:00",
+      "start": "22:02",
       "end": "08:00"
     }
   },
@@ -32,6 +32,5 @@
         }
       }
     }
-
   ]
 }

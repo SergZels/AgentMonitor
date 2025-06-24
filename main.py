@@ -9,24 +9,15 @@ from telethon.errors import (
 import asyncio
 import aiohttp
 import json
-from datetime import datetime, timedelta, time
-import logging
+from datetime import datetime, timedelta, time,timezone
+from elastic import logger
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 import sys
 import pytz
 
 #------------------------------------------------------------------------------
-# Налаштування логування
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler("monitor.log", encoding="utf-8"),
-        logging.StreamHandler(),
-    ],
-)
-logger = logging.getLogger(__name__)
+
 
 @dataclass
 class MonitoringConfig:
@@ -272,7 +263,12 @@ class TelegramMultiMonitor:
             return False
 
         try:
-            await self.client.send_message(self.notification_chat_id, message)
+            chat_id = self.notification_chat_id
+            if isinstance(chat_id, str):
+                chat_id = chat_id.strip().strip('"').strip("'")
+                if chat_id.lstrip('-').isdigit():
+                    chat_id = int(chat_id)
+            await self.client.send_message(chat_id, message)
             return True
         except Exception as e:
             logger.error(f"Помилка при відправці повідомлення: {e}")
@@ -901,9 +897,8 @@ async def main():
         print("4. Встановіть pytz: pip install pytz")
         sys.exit(1)
 
-#------------------------------
+
 if __name__ == "__main__":
     asyncio.run(main())
 
-#--------test------------------------------
-#--------test in dev-----------------------
+
