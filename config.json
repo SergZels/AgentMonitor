@@ -1,12 +1,12 @@
 {
   "telegram": {
-    "api_id": 29592718,
-    "api_hash": "1ca02f298f8e6ed5184eadd7ea3f50c4",
-    "session_string": "1AZWarzgBu3XASuuE24DTaPHvOKl9brPyvG3yfE0az-i7VKoSA-2Zm_aTByx1bBAZEUrQeQ1wJqlwZrTxbqD1MSLeC6aytpNMscX9Lll0x0jXdha3D5T_kC5oCEZMIOehSOdEBSCmdqjVaT-418u_G_mC2vvK2F-QuTvlR2lE3_UvSw_8FJgYnAS6XkoOKzKF3OCfPmMR_eAWhM1Rh6LYJQvAFM9DtC3QkqHq9yfs_8ivP8Xq-9a_40zeAhnvQzGUbmIvXZQKCK5IVD4dIzlIhK_m5ieSWAoGKNAxeks408wUMNdWNDHMCI7XA1EMGPx9rfLGTtYJdc7wt68IJ8Ly8urA_xEmbHk="
+    "api_id": 2040,
+    "api_hash": "b18441a1ff607e10a989891a5462e627",
+    "session_string": "1AZWarzYBuyjWPy2p-LbdURRhR3hS6B5BmiKFRdCermmlVFz8bSUW_9ZAiAy57f7gh8kJISZKpLMNFuz2wq47TC2EvIlJTsK6492F7ZH-tXmZZbWBPT_Kuu1uWIy_jUlEClj-MpLa8Jxugo11e4QdRXAFBCdtPzNV9ZgFe6NH19AZmEL_mqwTTwvspKFI0sP9kyWRJ9EpOGZQ-a_H_vyH3R20ro49eT7_Bvcgy2ov_vOTe5c6PBibwVOoP-i0YVtp33_o3wNJlQyBzD549FkrOHhV88RQ5ePycqKZtyQkmuJ3uus4l4TexRKwX7NWpgL1QPE5uFugTApzrCxQwxECBZSu1wK66ts="
   },
   "global_settings": {
     "check_interval_seconds": 60,
-    "notification_user_id": -4760430303,
+    "notification_user_id": "-4760430303",
     "timezone": "Europe/Kiev",
     "night_hours": {
       "start": "22:02",
@@ -19,13 +19,67 @@
       "name": "Main",
       "description": "Main server",
       "monitoring": {
-        "enabled": true,
+        "enabled": false,
         "day_inactive_minutes": 60,
         "night_inactive_minutes": 90
       },
       "api_reboot": {
         "enabled": true,
         "url": "https://chargeback-fund.com/control/restart",
+        "method": "GET",
+        "headers": {
+          "x-service-token": "123"
+        }
+      }
+    },
+    {
+      "chat_id": -4903264439,
+      "name": "Lend Agent Loc 1",
+      "description": "",
+      "monitoring": {
+        "enabled": true,
+        "day_inactive_minutes": 60,
+        "night_inactive_minutes": 90
+      },
+      "api_reboot": {
+        "enabled": false,
+        "url": null,
+        "method": "GET",
+        "headers": {
+          "x-service-token": "123"
+        }
+      }
+    },
+    {
+      "chat_id": -4981309010,
+      "name": "Lend Agent Loc 2",
+      "description": "",
+      "monitoring": {
+        "enabled": true,
+        "day_inactive_minutes": 60,
+        "night_inactive_minutes": 90
+      },
+      "api_reboot": {
+        "enabled": false,
+        "url": null,
+        "method": "GET",
+        "headers": {
+          "x-service-token": "123"
+        }
+      }
+    },
+    {
+      "chat_id": -4719972872,
+      "name": "Lend Agent Loc 3",
+      "description": "",
+      "monitoring": {
+        "enabled": true,
+        "day_inactive_minutes": 60,
+        "night_inactive_minutes": 90
+      },
+      "api_reboot": {
+        "enabled": false,
+        "url": null,
         "method": "GET",
         "headers": {
           "x-service-token": "123"
